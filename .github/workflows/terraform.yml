@@ -22,19 +22,60 @@ jobs:
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
-      with:
-        scaleway_access_key: ${{ secrets.SCALEWAY_ACCESS_KEY }}
-        scaleway_secret_key: ${{ secrets.SCALEWAY_SECRET_KEY }}
-
+      env:
+        SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
+        SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
+      
     - name: Terraform Init
       run: terraform init
+      env:
+        SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
+        SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
 
     - name: Terraform Format
       run: terraform fmt -check
+      env:
+        SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
+        SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
 
     - name: Terraform Plan
       run: terraform plan
+      env:
+        SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
+        SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve
+      env:
+        SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
+        SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
+
+    - uses: actions/github-script@0.9.0
+      if: github.event_name == 'pull_request'
+      env:
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
+        SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}        
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Validation 🤖${{ steps.validate.outputs.stdout }}
+          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          
+          <details><summary>Show Plan</summary>
+          
+          \`\`\`${process.env.PLAN}\`\`\`
+          
+          </details>
+          
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
