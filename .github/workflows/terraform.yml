@@ -47,6 +47,13 @@ jobs:
         SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
         SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
 
+    - name: Terraform Validate
+      run: terraform validate
+      id: validate
+      env:
+        SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
+        SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
+
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve
