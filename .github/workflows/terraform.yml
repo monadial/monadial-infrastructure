@@ -28,18 +28,21 @@ jobs:
       
     - name: Terraform Init
       run: terraform init
+      id: init
       env:
         SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
         SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
 
     - name: Terraform Format
       run: terraform fmt -check
+      id: fmt
       env:
         SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
         SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
 
     - name: Terraform Plan
       run: terraform plan
+      id: plan
       env:
         SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
         SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
@@ -47,6 +50,7 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve
+      id: apply
       env:
         SCW_ACCESS_KEY: ${{ secrets.SCALEWAY_ACCESS_KEY }}
         SCW_SECRET_KEY: ${{ secrets.SCALEWAY_SECRET_KEY }}
