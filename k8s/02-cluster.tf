@@ -21,3 +21,23 @@ resource "scaleway_k8s_pool" "monadial_k8s_pool" {
   min_size    = 2
   max_size    = 6
 }
+
+provider "kubernetes" {
+  load_config_file = false
+  host             = scaleway_k8s_cluster.monadial_k8s_cluster.kubeconfig[0].host
+  token            = scaleway_k8s_cluster.monadial_k8s_cluster.kubeconfig[0].token
+  cluster_ca_certificate = base64decode(
+    scaleway_k8s_cluster.monadial_k8s_cluster.kubeconfig[0].cluster_ca_certificate
+  )
+}
+
+provider "helm" {
+  kubernetes {
+    load_config_file = false
+    host             = scaleway_k8s_cluster.monadial_k8s_cluster.kubeconfig[0].host
+    token            = scaleway_k8s_cluster.monadial_k8s_cluster.kubeconfig[0].token
+    cluster_ca_certificate = base64decode(
+      scaleway_k8s_cluster.monadial_k8s_cluster.kubeconfig[0].cluster_ca_certificate
+    )
+  }
+}
