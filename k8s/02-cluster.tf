@@ -3,7 +3,6 @@ resource "scaleway_k8s_cluster" "monadial_k8s_cluster" {
   description = "Monadial K8S production cluster"
   version     = "1.21.0"
   cni         = "cilium"
-  project_id  = "defulat"
 
   autoscaler_config {
     scale_down_delay_after_add    = "5m"
