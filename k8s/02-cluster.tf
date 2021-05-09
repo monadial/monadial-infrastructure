@@ -35,8 +35,8 @@ resource "null_resource" "kubeconfig" {
 
 
 provider "kubernetes" {
-  host             = null_resource.kubeconfig.triggers.host
-  token            = null_resource.kubeconfig.triggers.token
+  host  = null_resource.kubeconfig.triggers.host
+  token = null_resource.kubeconfig.triggers.token
   cluster_ca_certificate = base64decode(
     null_resource.kubeconfig.triggers.cluster_ca_certificate
   )
@@ -44,8 +44,8 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
-    host             = null_resource.kubeconfig.triggers.host
-    token            = null_resource.kubeconfig.triggers.token
+    host  = null_resource.kubeconfig.triggers.host
+    token = null_resource.kubeconfig.triggers.token
     cluster_ca_certificate = base64decode(
       null_resource.kubeconfig.triggers.cluster_ca_certificate
     )
