@@ -26,7 +26,7 @@ resource "helm_release" "ingress_gateway" {
   chart      = var.ingress_gateway_chart_name
   repository = var.ingress_gateway_chart_repo
   version    = var.ingress_gateway_chart_version
-  namespace = "traefik"
+  namespace  = "traefik"
 
   values = [
     file("helm-values/traefik.yml")
