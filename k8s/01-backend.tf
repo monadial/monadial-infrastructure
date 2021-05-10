@@ -1,4 +1,10 @@
 terraform {
+  backend "remote" {
+    organization = "monadial"
+    workspaces {
+      name = "monadial-infrastructure"
+    }
+  }
   required_providers {
     scaleway = {
       source  = "scaleway/scaleway"
